@@ -51,6 +51,10 @@ const Home = () => {
                         onChange={(e) => setRoomId(e.target.value)}
                         value={roomId}
                         onKeyUp={handleInputEnter}
+
+                        style={{
+                            color :"black"
+                        }}
                     />
                     <input
                         type="text"
@@ -59,6 +63,9 @@ const Home = () => {
                         onChange={(e) => setUsername(e.target.value)}
                         value={username}
                         onKeyUp={handleInputEnter}
+                        style={{
+                            color :"black"
+                        }}
                     />
                     <button className="btn joinBtn" onClick={joinRoom}>
                         Join
@@ -77,8 +84,7 @@ const Home = () => {
             </div>
             <footer>
                 <h4>
-                    Built with 💛 &nbsp; by &nbsp;
-                    <a href="https://github.com/codersgyan">Coder's Gyan</a>
+                    Built By ASHISH PUROHIT , BHUWNESH TRIPATHI and KAUHSAL BISHT
                 </h4>
             </footer>
         </div>

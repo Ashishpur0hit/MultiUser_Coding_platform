@@ -32,6 +32,10 @@ io.on('connection', (socket) => {
     socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
         userSocketMap[socket.id] = username;
         socket.join(roomId);
+        socket.broadcast.to(roomId).emit("new_peer", {
+            socketId: socket.id,
+            micOn: true, // You can track mic state here
+        });
         const clients = getAllConnectedClients(roomId);
         clients.forEach(({ socketId }) => {
             io.to(socketId).emit(ACTIONS.JOINED, {
@@ -39,8 +43,12 @@ io.on('connection', (socket) => {
                 username,
                 socketId: socket.id,
             });
+
         });
     });
+
+
+   
 
     socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
         socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
@@ -50,14 +58,13 @@ io.on('connection', (socket) => {
         io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
     });
 
-    socket.on('mic-toggle', ({ roomId, username, stream }) => {
-        // Broadcast the mic stream to all other users in the room
-        const clients = getAllConnectedClients(roomId);
-        clients.forEach(({ socketId }) => {
-            if (socketId !== socket.id) {
-                io.to(socketId).emit('user-mic-stream', { username, stream });
-                console.log("mic event");
-            }
+    // Handle mic toggle event
+    socket.on("mic_toggle", ({ roomId, username, micOn }) => {
+        console.log(`${username} toggled mic: ${micOn}`);
+        // Notify others in the room about the mic status
+        socket.to(roomId).emit("mic_toggle_responce", {
+            username,
+            micOn,
         });
     });
 
@@ -82,10 +89,39 @@ io.on('connection', (socket) => {
         });
     });
 
+
+    // Server-side socket events for voice chat
+
+socket.on('send_offer', ({ sdp, to }) => {
+    console.log("offer Recieved On server");
+    socket.to(to).emit('recieve_offer', { sdp, from: socket.id });
+});
+
+socket.on('send_answer', ({ sdp, to }) => {
+    console.log("answer Recieved On server");
+    socket.to(to).emit('recieve_answer', { sdp, from: socket.id });
+});
+
+socket.on('ICE_candidates', ({ candidate, socketId }) => {
+    console.log("ICE Recieved On server");
+    
+    io.to(socketId).emit('recieve_ice_candidate', { candidate, from: socket.id });
+    console.log(userSocketMap[socketId]);
+});
+
+    
+
    
     
 
     socket.on('disconnecting', () => {
+
+        // Object.keys(peersRef.current).forEach((peerId) => {
+        //     peersRef.current[peerId].close();
+        //     delete peersRef.current[peerId];
+        // });
+
+
         const rooms = [...socket.rooms];
         rooms.forEach((roomId) => {
             socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
