@@ -72,6 +72,7 @@ const EditorPage = () => {
 
                 socketRef.current.on('toggle_responce',({username,state})=>{
                     set_show_whiteboard(state);
+                    localStorage.setItem("show_whiteboard", JSON.stringify(state));
                     if(show_whiteboard)
                     {
                         toast.success(`${username} swithed to WhiteBoard`);
@@ -179,7 +180,8 @@ const EditorPage = () => {
         };
 
         init();
-
+        if(localStorage.getItem("show_whiteboard")!==null) set_show_whiteboard(JSON.parse(localStorage.getItem("show_whiteboard")));
+        else localStorage.setItem("show_whiteboard", JSON.stringify(show_whiteboard));
         return () => {
             // Cleanup on unmount
             if (socketRef.current) {
@@ -283,6 +285,9 @@ const EditorPage = () => {
             toast.error('Could not copy the Room ID.');
         }
     };
+
+
+    
 
     const leaveRoom = () => reactNavigator('/');
 

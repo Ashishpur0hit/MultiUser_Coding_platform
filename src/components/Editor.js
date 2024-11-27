@@ -9,6 +9,8 @@ import ACTIONS from '../Actions';
 
 const Editor = ({ socketRef, roomId, onCodeChange }) => {
     const editorRef = useRef(null);
+    const [code, setCode] = useState(''); // State to store the current code
+
     const [output, setOutput] = useState(''); // State to store code output
 
 
@@ -26,12 +28,13 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
     
             editorRef.current.on('change', (instance, changes) => {
               const { origin } = changes;
-              const code = instance.getValue();
-              onCodeChange(code);
+              const newCode = instance.getValue();
+              setCode(newCode); // Save the code in the state
+              onCodeChange(newCode);
               if (origin !== 'setValue') {
                 socketRef.current.emit(ACTIONS.CODE_CHANGE, {
                   roomId: roomId,
-                  code: code,
+                  code: newCode,
                 });
               }
             });
@@ -39,6 +42,13 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         };
     
         init();
+        if (editorRef.current) {
+          editorRef.current.setValue(code); // Restore the code
+      }
+
+
+      console.log("Editor Rerendered");
+      
     
         return () => {
           editorRef.current.toTextArea();
