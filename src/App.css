@@ -4,10 +4,11 @@
     justify-content: center;
     color: #fff;
     height: 100vh;
+    flex-direction: column;
 }
 
 .formWrapper {
-    background: #282a36;
+    background: #d2d2d2;
     padding: 20px;
     border-radius: 10px;
     width: 400px;
@@ -61,14 +62,14 @@ footer a {
 
 .joinBtn,
 .leaveBtn {
-    background: #4aed88;
+    background: black;
     width: 100px;
     margin-left: auto;
 }
 
 .joinBtn:hover,
 .leaveBtn:hover {
-    background: #2b824c;
+    background: gray;
 }
 
 .createInfo {
@@ -77,9 +78,9 @@ footer a {
 }
 
 .createNewBtn {
-    color: #4aed88;
+    color: white;
     text-decoration: none;
-    border-bottom: 1px solid #4aed88;
+    border-bottom: 1px solid gray;
     transition: all 0.3s ease-in-out;
 }
 

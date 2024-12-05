@@ -3,7 +3,11 @@ module.exports = {
     "./src/**/*.{html,js,jsx,ts,tsx}", // Include all React component files
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customPink: 'rgb(230, 152, 168)',
+      },
+    },
   },
   plugins: [],
 }

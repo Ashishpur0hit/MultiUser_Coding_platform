@@ -101,6 +101,8 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
         console.log = originalConsoleLog;
       };
 
+      
+
 
     return (
         <div className="w-full h-screen flex flex-col items-center">
@@ -108,11 +110,11 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
             {/* Run Button */}
             <button
               onClick={runCode}
-              className="w-20 p-2 bg-blue-500 text-white rounded mt-2"
+              className="w-20 p-2 bg-green-500 text-white rounded mt-2"
             >
               Run
             </button>
-    
+
             
           </div>
     
@@ -122,7 +124,7 @@ const Editor = ({ socketRef, roomId, onCodeChange }) => {
           </div>
     
           {/* Output Section */}
-          <div className="w-full h-1/4 overflow-auto bg-gray-900 text-white rounded p-4">
+          <div className="w-full h-1/4 overflow-auto bg-black text-white rounded p-4">
             <h3 className="font-bold">Output:</h3>
             <pre>{output}</pre>
           </div>

@@ -4,6 +4,7 @@ import ACTIONS from '../Actions';
 import Client from '../components/Client';
 import Editor from '../components/Editor';
 import { initSocket } from '../socket';
+import Bot from '../components/Bot';
 import {
     useLocation,
     useNavigate,
@@ -11,6 +12,8 @@ import {
     useParams,
 } from 'react-router-dom';
 import WhiteBoard from '../components/WhiteBoard';
+import Group from '../components/Group';
+
 
 const EditorPage = () => {
     const socketRef = useRef(null);
@@ -39,7 +42,7 @@ const EditorPage = () => {
                     reactNavigator('/');
                 }
 
-               
+
 
 
                 // Join Room
@@ -70,15 +73,13 @@ const EditorPage = () => {
                 });
 
 
-                socketRef.current.on('toggle_responce',({username,state})=>{
+                socketRef.current.on('toggle_responce', ({ username, state }) => {
                     set_show_whiteboard(state);
                     localStorage.setItem("show_whiteboard", JSON.stringify(state));
-                    if(show_whiteboard)
-                    {
+                    if (show_whiteboard) {
                         toast.success(`${username} swithed to WhiteBoard`);
                     }
-                    else
-                    {
+                    else {
                         toast.success(`${username} swithed to Editor`);
                     }
                 })
@@ -180,7 +181,7 @@ const EditorPage = () => {
         };
 
         init();
-        if(localStorage.getItem("show_whiteboard")!==null) set_show_whiteboard(JSON.parse(localStorage.getItem("show_whiteboard")));
+        if (localStorage.getItem("show_whiteboard") !== null) set_show_whiteboard(JSON.parse(localStorage.getItem("show_whiteboard")));
         else localStorage.setItem("show_whiteboard", JSON.stringify(show_whiteboard));
         return () => {
             // Cleanup on unmount
@@ -230,9 +231,9 @@ const EditorPage = () => {
             remoteAudio.muted = true; // Prevent playback restrictions
             remoteAudio.play().catch((err) => console.error('Audio playback error:', err));
         };
-        
-        
-        
+
+
+
 
         // When ICE candidates are generated, send them to the server
         peerConnection.onicecandidate = (event) => {
@@ -287,7 +288,7 @@ const EditorPage = () => {
     };
 
 
-    
+
 
     const leaveRoom = () => reactNavigator('/');
 
@@ -301,56 +302,138 @@ const EditorPage = () => {
         });
     };
 
-    
+
 
     if (!location.state) {
         return <Navigate to="/" />;
     }
 
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
     return (
-        <div className='grid grid-cols-3 sm:grid-cols-10 md:grid-cols-12 h-screen bg-gray-800'>
+        <div className='flex h-screen'>
 
-            <div className='bg-gray-800 flex flex-col items-center h-screen col-span-1 sm:col-span-3 md:col-span-2 overflow-y-auto scrollbar-hide'>
-                <img className='h-24' src='https://static.vecteezy.com/system/resources/previews/009/887/458/original/coding-illustration-3d-png.png' alt="code-sync-logo" />
-                <p className='text-white font-semibold ms-5 text-xl'>Connected</p>
+            <div className="w-1/5 h-full bg-gray-800 flex flex-col justify-between">
 
-                <button
-                    onClick={toggleMic}
-                    className={`rounded-lg ps-5 pe-5 pt-2 pb-2 ${micOn ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
-                        } mt-2 text-white font-semibold w-full sm:w-auto text-sm`}
-                >
-                    {micOn ? 'Mic On' : 'Mic Off'}
-                </button>
+                <div>
+                    <div className="p-4 border-b border-gray-700">
+                        <h1 className="text-lg font-bold text-gray-200">Code Collab</h1>
+                    </div>
 
+                    <button
+                        onClick={toggleMic}
+                        className={`w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200`}
+                    >
+                        {micOn ? 'Mic On' : 'Mic Off'}
+                    </button>
 
-             
+                    <button onClick={copyRoomId} className='w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200'>
+                        Copy Room ID
+                    </button>
+                    <button onClick={leaveRoom} className=' w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200 '>
+                        Leave
+                    </button>
 
-                <div className="clientsList">
-                    {clients.map((client) => (
-                        <Client
-                            key={client.socketId}
-                            username={client.username}
-                            socketRef={socketRef}
-                            roomId={roomId}
-                        />
-                    ))}
+                    <button onClick={toggleWhiteBoard} className='w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200'>
+                        Switch
+                    </button>
+                    
+                    <ul class="mt-4 space-y-2 bg-gray-800 p-4 w-full flex items-center flex-col">
+            <li class="flex items-center space-x-2 text-white w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200">
+              <span class="text-green-500">•</span>
+              <span>Main.html</span>
+            </li>
+            <li class="flex items-center space-x-2 text-white w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200">
+              <span class="text-yellow-500">•</span>
+              <span>Check.config.json</span>
+            </li>
+            <li class="flex items-center space-x-2 text-white w-full block p-3 hover:bg-gray-700 rounded-md text-gray-200">
+              <span class="text-red-500">•</span>
+              <span>Readme.md</span>
+            </li>
+          </ul>
+                    
+
                 </div>
 
-                <button onClick={copyRoomId} className='hover:bg-green-600 rounded-lg ps-5 pe-5 pt-2 pb-2 bg-green-500 mt-16 text-white font-semibold text-sm w-full sm:w-auto'>
-                    Copy Room ID
-                </button>
-                <button onClick={leaveRoom} className='hover:bg-gray-900 rounded-lg ps-5 pe-5 pt-2 pb-2 bg-black mt-2 text-white font-semibold w-full sm:w-auto text-sm'>
-                    Leave
-                </button>
+               
 
-                <button onClick={toggleWhiteBoard} className='hover:bg-gray-900 rounded-lg ps-5 pe-5 pt-2 pb-2 bg-black mt-2 text-white font-semibold w-full sm:w-auto text-sm'>
-                    Switch
-                </button>
+                <div className="p-4">
+                    <button onClick={leaveRoom} className="w-full bg-red-500 hover:bg-red-700 py-2 px-4 rounded-md text-gray-200">Log Out</button>
+                </div>
             </div>
 
-            <div className='h-screen col-span-2 sm:col-span-7 md:col-span-10 overflow-y-auto scrollbar-hide items-top'>
+
+            <div className="w-4/5 flex flex-col">
+
+                <div className="flex items-center justify-between bg-gray-800 px-4 py-2">
+                    <div className="flex items-center space-x-4">
+                        <button className="bg-gray-700 hover:bg-gray-600 text-sm px-4 py-2 rounded-md text-gray-200">New Project</button>
+                        <button className="bg-gray-700 hover:bg-gray-600 text-sm px-4 py-2 rounded-md text-gray-200">File</button>
+                        <button className="bg-gray-700 hover:bg-gray-600 text-sm px-4 py-2 rounded-md text-gray-200">Edit</button>
+                    </div>
+                    <div className="text-sm text-gray-200">
+                        <img className='w-10 border-round rounded-full' src='https://toppng.com/uploads/preview/cool-avatar-transparent-image-cool-boy-avatar-11562893383qsirclznyw.png'>
+                        </img>
+                    </div>
+                </div>
+
+
+                   <div className="flex flex-1">
+
+                       <div className="w-1/4 bg-gray-850 p-4 border-r border-gray-700">
+                           <h3 className="text-gray-400 text-sm font-semibold mb-12">Members</h3>
+
+
+                        {clients.map((client) => (
+                                                <Client
+                                                    key={client.socketId} 
+                                                    username={client.username}
+                                                    socketRef={socketRef}
+                                                    roomId={roomId}
+                                                />
+                                            ))}
+                    </div>
+
+
+                    <div className="flex-1 flex flex-col w-4/5">
+
+                        
+
+
+                        <div className="flex-1 bg-gray-850 p-4 text-sm font-mono leading-relaxed overflow-y-auto text-white">
+                        {!show_whiteboard ? <Editor socketRef={socketRef} roomId={roomId} onCodeChange={(code) => { codeRef.current = code }} /> : <WhiteBoard canDraw={true} socket_ref={socketRef} roomId={roomId} />}
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+
+            
+
+            {/* <div className='h-screen col-span-2 sm:col-span-7 md:col-span-10 overflow-y-auto scrollbar-hide items-top'>
                 {!show_whiteboard ? <Editor socketRef={socketRef} roomId={roomId} onCodeChange={(code) => { codeRef.current = code }} /> : <WhiteBoard canDraw={true} socket_ref={socketRef} roomId={roomId} />}
-            </div>
+            </div> */}
         </div>
     );
 
